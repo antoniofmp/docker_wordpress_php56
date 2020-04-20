@@ -1,0 +1,27 @@
+version: '2'
+services:
+   db_wordpress:
+     image: mysql:5.7
+     container_name: db_wordpress
+     volumes:
+       - ./db_data:/var/lib/mysql
+       - ./db_dump:/docker-entrypoint-initdb.d
+     restart: always
+     environment:
+       MYSQL_ROOT_PASSWORD: root
+       MYSQL_DATABASE: db_wp
+       MYSQL_USER: antonio
+       MYSQL_PASSWORD: antonio
+   wordpress:
+     depends_on:
+       - db_wordpress
+     image: boompe/php5.6.40-apache-stretch
+     container_name: wordpress
+     ports:
+       - "80:80"
+     restart: always
+     links:
+      - db_wordpress:mysql
+     volumes:
+      - ./mywordpress:/var/www/html/mywordpress
+      - ./apache_conf/vhost.conf:/etc/apache2/sites-available/vhost.conf
